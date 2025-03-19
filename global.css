@@ -1,0 +1,6 @@
+/* @import "@fontsource/roboto/variable.css";
+@import "@fontsource/space-grotesk/variable.css"; */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
