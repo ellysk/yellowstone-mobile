@@ -1,5 +1,4 @@
 import { View, Text } from "react-native";
-import Logo from "@/components/svg/Logo";
 
 export default function TenantsScreen() {
   return (
