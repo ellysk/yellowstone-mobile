@@ -3,44 +3,55 @@ import Button, { ButtonProps } from "./Button";
 import React from "react";
 
 interface InfoViewProps {
-  label: string;
-  value: string;
+  title?: string;
+  subTitle?: string;
   actionableInfo?: string;
   isActionable?: boolean;
   buttonProps?: ButtonProps;
-  showButton?: boolean;
   onPressActionableInfo?: () => void;
   backgroundColor?: string;
-  labelTextColor?: string;
-  valueTextColor?: string;
+  titleTextColor?: string;
+  subTitleTextColor?: string;
   actionableInfoTextColor?: string;
   actionableInfoDecoratorTextColor?: string;
+  onPress?: () => void;
 }
 
 const InfoView: React.FC<InfoViewProps> = ({
-  label,
-  value,
+  title,
+  subTitle,
   actionableInfo,
   isActionable,
-  showButton = false,
-  buttonProps = { title: "Action", variant: "secondary", border: true },
+  buttonProps,
   onPressActionableInfo,
   backgroundColor = "bg-background-card",
-  labelTextColor = "text-text-main",
-  valueTextColor = "text-text-body",
+  titleTextColor = "text-text-main",
+  subTitleTextColor = "text-text-body",
   actionableInfoTextColor = "text-text-main",
-  actionableInfoDecoratorTextColor = "text-text-main",
+  actionableInfoDecoratorTextColor = "decoration-text-main",
+  onPress = () => {},
 }) => {
   return (
-    <View className={`flex flex-col gap-y-2 w-full ${backgroundColor} p-4`}>
+    <Pressable
+      className={`flex flex-col gap-y-2 w-full ${backgroundColor} p-4`}
+      onPress={onPress}
+    >
       <View className="flex flex-row justify-between gap-x-4">
         <View className="flex-col gap-y-0 flex-shrink">
-          <Text className={`text-left font-primary text-lg ${labelTextColor}`}>
-            {label}
-          </Text>
-          <Text className={`text-left font-primary text-sm ${valueTextColor}`}>
-            {value}
-          </Text>
+          {title && (
+            <Text
+              className={`text-left font-primary text-lg ${titleTextColor}`}
+            >
+              {title}
+            </Text>
+          )}
+          {subTitle && (
+            <Text
+              className={`text-left font-primary text-sm ${subTitleTextColor}`}
+            >
+              {subTitle}
+            </Text>
+          )}
         </View>
         {actionableInfo &&
           (isActionable ? (
@@ -59,8 +70,12 @@ const InfoView: React.FC<InfoViewProps> = ({
             </Text>
           ))}
       </View>
-      {showButton && buttonProps && <Button {...buttonProps} />}
-    </View>
+      {buttonProps && (
+        <View className="self-start">
+          <Button {...buttonProps} />
+        </View>
+      )}
+    </Pressable>
   );
 };
 
@@ -70,6 +85,7 @@ interface InfoHeaderViewProps {
   backgroundColor?: string;
   headerTextColor?: string;
   descriptionTextColor?: string;
+  buttonProps?: ButtonProps;
 }
 
 const InfoHeaderView: React.FC<InfoHeaderViewProps> = ({
@@ -78,11 +94,16 @@ const InfoHeaderView: React.FC<InfoHeaderViewProps> = ({
   backgroundColor = "bg-border-main",
   headerTextColor = "text-text-main",
   descriptionTextColor = "text-text-body",
+  buttonProps,
 }) => {
   return (
-    <View className={`flex gap-y-2 w-full ${backgroundColor}  p-4`}>
+    <View
+      className={`flex flex-row justify-between items-center gap-x-4 ${backgroundColor} p-4`}
+    >
       <View className="flex-col gap-y-0 flex-shrink">
-        <Text className={`text-left font-primary text-2xl ${headerTextColor}`}>
+        <Text
+          className={`text-left font-primary font-bold text-2xl ${headerTextColor}`}
+        >
           {header}
         </Text>
         {description && (
@@ -93,44 +114,40 @@ const InfoHeaderView: React.FC<InfoHeaderViewProps> = ({
           </Text>
         )}
       </View>
+      {buttonProps && <Button {...buttonProps} />}
     </View>
   );
 };
 
 interface InfoListProps {
-  showHeader?: boolean;
-  header: string;
-  description?: string;
+  headerProps?: InfoHeaderViewProps;
   data: InfoViewProps[];
+  scrollEnabled?: boolean;
 }
 
 const InfoList: React.FC<InfoListProps> = ({
-  showHeader = false,
-  header,
-  description,
+  headerProps,
   data = [],
+  scrollEnabled = true,
 }) => {
   return (
-    <ScrollView>
-      {showHeader && (
-        <InfoHeaderView header={header} description={description} />
-      )}
+    <ScrollView scrollEnabled={scrollEnabled}>
+      {headerProps && <InfoHeaderView {...headerProps} />}
       {data.map((item, index) => (
         <View
           key={index}
           style={{ marginBottom: index === data.length - 1 ? 0 : 4 }}
         >
           <InfoView
-            label={item.label}
-            value={item.value}
+            title={item.title}
+            subTitle={item.subTitle}
             actionableInfo={item.actionableInfo}
             isActionable={item.isActionable}
-            showButton={!!item.buttonProps}
             buttonProps={item.buttonProps}
             onPressActionableInfo={item.onPressActionableInfo}
             backgroundColor={item.backgroundColor}
-            labelTextColor={item.labelTextColor}
-            valueTextColor={item.valueTextColor}
+            titleTextColor={item.titleTextColor}
+            subTitleTextColor={item.subTitleTextColor}
             actionableInfoTextColor={item.actionableInfoTextColor}
             actionableInfoDecoratorTextColor={item.actionableInfoTextColor}
           />

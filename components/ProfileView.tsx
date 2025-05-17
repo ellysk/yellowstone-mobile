@@ -4,19 +4,17 @@ interface ProfileViewProps {
   profileImage?: string;
   name: string;
   company: string;
-  numOfTenantsManaged: number;
-  yearStarted: number;
+  details: string;
 }
 
 const ProfileView: React.FC<ProfileViewProps> = ({
-  profileImage = "https://gva.co.tz/storage/logo/gva-logo-17-copy.webp",
+  profileImage,
   name,
   company,
-  numOfTenantsManaged,
-  yearStarted,
+  details,
 }) => {
   return (
-    <View className="flex flex-row gap-x-4 items-start">
+    <View className="flex flex-row px-4 gap-x-4 items-start">
       <Image
         className="w-24 h-24 rounded-full"
         source={{
@@ -34,7 +32,7 @@ const ProfileView: React.FC<ProfileViewProps> = ({
           </Text>
         </View>
         <Text className="font-secondary text-left text-sm text-text-body">
-          {numOfTenantsManaged} Tenants managed since {yearStarted}
+          {details}
         </Text>
       </View>
     </View>
@@ -42,3 +40,5 @@ const ProfileView: React.FC<ProfileViewProps> = ({
 };
 
 export default ProfileView;
+
+export { ProfileView, ProfileViewProps };
