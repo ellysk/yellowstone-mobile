@@ -13,10 +13,9 @@ import { Badge } from "~/components/nativewindui/Badge";
 import { Text } from "~/components/nativewindui/Text";
 import { cn } from "~/utils/cn";
 import { Colors } from "~/constants/Colors";
-import PropertyIcon from "@/components/svg/PropertyIcon";
-import TenantLockIcon from "@/components/svg/TenantLockIcon";
-import TenantHomeIcon from "@/components/svg/TenantHomeIcon";
 import DashboardIcon from "@/components/svg/DashboardIcon";
+import BarCodeIcon from "@/components/svg/BarCodeIcon";
+import OperatorIcon from "@/components/svg/OperatorIcon";
 
 export default function TabLayout() {
   return (
@@ -43,29 +42,20 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="properties"
+          name="scan"
           options={{
-            title: "Properties",
+            title: "Scan",
             tabBarIcon(props) {
-              return <PropertyIcon {...props} width={27} height={27} />;
+              return <BarCodeIcon {...props} width={27} height={27} />;
             },
           }}
         />
         <Tabs.Screen
-          name="tenants"
+          name="operator"
           options={{
-            title: "Tenants",
+            title: "Operator",
             tabBarIcon(props) {
-              return <TenantLockIcon {...props} width={27} height={27} />;
-            },
-          }}
-        />
-        <Tabs.Screen
-          name="landlord"
-          options={{
-            title: "Landlord",
-            tabBarIcon(props) {
-              return <TenantHomeIcon {...props} width={27} height={27} />;
+              return <OperatorIcon {...props} width={27} height={27} />;
             },
           }}
         />
@@ -81,9 +71,8 @@ const TAB_BAR = Platform.select({
 
 const TAB_ICON = {
   index: "dashboard",
-  properties: "properties",
-  tenants: "tenants",
-  landlord: "landlord",
+  scan: "scan",
+  operator: "operator",
 } as const;
 
 function MaterialTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -157,12 +146,10 @@ function getTabIcon(name: string, size: number, color: string) {
   switch (name) {
     case "dashboard":
       return <DashboardIcon width={size} height={size} color={color} />;
-    case "properties":
-      return <PropertyIcon width={size} height={size} color={color} />;
-    case "tenants":
-      return <TenantLockIcon width={size} height={size} color={color} />;
-    case "landlord":
-      return <TenantHomeIcon width={size} height={size} color={color} />;
+    case "scan":
+      return <BarCodeIcon width={size} height={size} color={color} />;
+    case "operator":
+      return <OperatorIcon width={size} height={size} color={color} />;
     default:
       return null;
   }

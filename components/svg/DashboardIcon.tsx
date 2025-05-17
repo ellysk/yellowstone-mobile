@@ -1,13 +1,8 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
+import { IconProps } from "./Logo";
 
-interface DashboardIconProps {
-  width?: number;
-  height?: number;
-  color?: string;
-}
-
-const DashboardIcon: React.FC<DashboardIconProps> = ({
+const DashboardIcon: React.FC<IconProps> = ({
   width = 27,
   height = 27,
   color = "white",
