@@ -1,5 +1,11 @@
 import { useState, useCallback } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import {
   CameraView,
   BarcodeScanningResult,
@@ -10,11 +16,36 @@ export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [verificationStatus, setVerificationStatus] = useState<
+    "success" | "failure" | null
+  >(null);
+
+  const VALID_BARCODE = "5036108403004";
+
+  const verifyBarcode = (barcode: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      // Simulating API verification delay
+      setTimeout(() => {
+        resolve(barcode === VALID_BARCODE);
+      }, 1500);
+    });
+  };
 
   const handleBarCodeScanned = useCallback(
-    ({ data }: BarcodeScanningResult) => {
+    async ({ data }: BarcodeScanningResult) => {
       setScanned(true);
       setResult(data);
+      setIsVerifying(true);
+
+      try {
+        const isValid = await verifyBarcode(data);
+        setVerificationStatus(isValid ? "success" : "failure");
+      } catch (error) {
+        setVerificationStatus("failure");
+      } finally {
+        setIsVerifying(false);
+      }
     },
     []
   );
@@ -22,6 +53,8 @@ export default function ScanScreen() {
   const handleScanAgain = useCallback(() => {
     setScanned(false);
     setResult(null);
+    setVerificationStatus(null);
+    setIsVerifying(false);
   }, []);
 
   if (!permission) {
@@ -87,15 +120,35 @@ export default function ScanScreen() {
       {/* Result overlay */}
       {scanned && (
         <View className="absolute bottom-0 left-0 right-0 bg-black/70 p-4">
-          <Text className="text-white text-center mb-2" numberOfLines={2}>
-            {result}
-          </Text>
-          <TouchableOpacity
-            onPress={handleScanAgain}
-            className="bg-blue-500 py-2 px-4 rounded-lg self-center"
-          >
-            <Text className="text-white">Scan Again</Text>
-          </TouchableOpacity>
+          {isVerifying ? (
+            <View className="items-center">
+              <ActivityIndicator size="large" color="#3B82F6" />
+              <Text className="text-white mt-2">Verifying barcode...</Text>
+            </View>
+          ) : (
+            <>
+              <View className="items-center mb-4">
+                {verificationStatus === "success" ? (
+                  <Text className="text-green-500 text-lg font-bold mb-2">
+                    ✓ Verification Successful
+                  </Text>
+                ) : verificationStatus === "failure" ? (
+                  <Text className="text-red-500 text-lg font-bold mb-2">
+                    ✗ Invalid Barcode
+                  </Text>
+                ) : null}
+                <Text className="text-white text-center" numberOfLines={2}>
+                  {result}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={handleScanAgain}
+                className="bg-blue-500 py-2 px-4 rounded-lg self-center"
+              >
+                <Text className="text-white">Scan Again</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       )}
     </View>
