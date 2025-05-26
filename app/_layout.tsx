@@ -6,9 +6,12 @@ import { useFonts } from "expo-font";
 import { View } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function Layout() {
   const [fontsLoaded] = useFonts({
@@ -21,29 +24,29 @@ export default function Layout() {
 
   useEffect(() => {
     if (fontsLoaded) {
-      SplashScreen.hideAsync(); // Hide the splash screen once fonts are loaded
+      SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    // Keep the splash screen visible while fonts are loading
     return null;
   }
 
   return (
-    <View
-      className="flex-1 bg-background-main"
-      style={{
-        paddingTop: insets.top,
-        paddingLeft: insets.left,
-        paddingRight: insets.right,
-      }}
-    >
-      <StatusBar style="dark" />
-      {/* Set to "dark" or "light" based on your theme */}
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-    </View>
+    <QueryClientProvider client={queryClient}>
+      <View
+        className="flex-1 bg-background-main"
+        style={{
+          paddingTop: insets.top,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+      >
+        <StatusBar style="dark" />
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </View>
+    </QueryClientProvider>
   );
 }
