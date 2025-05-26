@@ -1,13 +1,13 @@
 import * as React from "react";
-import { View, Text, ViewStyle, Image } from "react-native";
+import { View, Text, ViewStyle } from "react-native";
 
 interface DashboardCardProps {
   /**
-   * The total count to display
+   * The total count to display. Can be a number or "Loading..." during loading states
    */
-  count?: number;
+  count?: number | string;
   /**
-   * The icon URL to display
+   * The icon component to display
    */
   iconComponent: React.FC;
   /**
@@ -24,7 +24,7 @@ interface DashboardCardProps {
  * A dashboard card component that displays a statistic with an icon
  */
 const DashboardCard: React.FC<DashboardCardProps> = ({
-  count = 24,
+  count = "0",
   iconComponent: IconComponent,
   label = "Total Properties",
   width = "auto",
