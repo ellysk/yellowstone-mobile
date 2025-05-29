@@ -11,50 +11,52 @@ import {
   BarcodeScanningResult,
   useCameraPermissions,
 } from "expo-camera";
+import { useMutation } from "@tanstack/react-query";
+import { verifyTag } from "@/api";
 
 export default function ScanScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [result, setResult] = useState<string | null>(null);
-  const [isVerifying, setIsVerifying] = useState(false);
   const [verificationStatus, setVerificationStatus] = useState<
     "success" | "failure" | null
   >(null);
 
-  const VALID_BARCODE = "5036108403004";
+  const { mutate: verifyBarcode, isPending: isVerifying } = useMutation({
+    mutationFn: verifyTag,
+    onSuccess: (data) => {
+      setVerificationStatus(data.success ? "success" : "failure");
+    },
+    onError: (error) => {
+      console.log("Verification error:", error.message);
 
-  const verifyBarcode = (barcode: string): Promise<boolean> => {
-    return new Promise((resolve) => {
-      // Simulating API verification delay
-      setTimeout(() => {
-        resolve(barcode === VALID_BARCODE);
-      }, 1500);
-    });
-  };
+      setVerificationStatus("failure");
+    },
+  });
 
   const handleBarCodeScanned = useCallback(
     async ({ data }: BarcodeScanningResult) => {
       setScanned(true);
       setResult(data);
-      setIsVerifying(true);
 
-      try {
-        const isValid = await verifyBarcode(data);
-        setVerificationStatus(isValid ? "success" : "failure");
-      } catch (error) {
-        setVerificationStatus("failure");
-      } finally {
-        setIsVerifying(false);
-      }
+      // Mocked location data - in a real app, this would come from user selection or GPS
+      const mockData = {
+        region: "Dar es salaam",
+        district: "Ilala",
+      };
+
+      verifyBarcode({
+        tagId: data,
+        payload: mockData,
+      });
     },
-    []
+    [verifyBarcode]
   );
 
   const handleScanAgain = useCallback(() => {
     setScanned(false);
     setResult(null);
     setVerificationStatus(null);
-    setIsVerifying(false);
   }, []);
 
   if (!permission) {
