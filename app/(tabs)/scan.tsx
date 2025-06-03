@@ -28,8 +28,6 @@ export default function ScanScreen() {
       setVerificationStatus(data.success ? "success" : "failure");
     },
     onError: (error) => {
-      console.log("Verification error:", error.message);
-
       setVerificationStatus("failure");
     },
   });
